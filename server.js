@@ -208,47 +208,100 @@ async function processSpeechData(audioData, language) {
     });
 }
 
-// Translation function (placeholder for production translation service)
+// Import the translation service
+const TranslationService = require('./translationService');
+
+// Initialize translation service
+const translationService = new TranslationService();
+
+// Translation function using real translation APIs
 async function translateText(text, sourceLanguage, targetLanguage) {
-    // In production, this would use a real translation API
-    // For demo purposes, we'll use simple mappings
-    const translations = {
-        'hello': {
-            'es': 'hola',
-            'fr': 'bonjour',
-            'de': 'hallo',
-            'it': 'ciao',
-            'pt': 'olá',
-            'ru': 'привет',
-            'ja': 'こんにちは',
-            'ko': '안녕하세요',
-            'zh': '你好'
-        },
-        'how are you': {
-            'es': '¿cómo estás?',
-            'fr': 'comment allez-vous?',
-            'de': 'wie geht es dir?',
-            'it': 'come stai?',
-            'pt': 'como você está?',
-            'ru': 'как дела?',
-            'ja': 'お元気ですか？',
-            'ko': '어떻게 지내세요?',
-            'zh': '你好吗？'
-        }
-    };
-
-    const lowerText = text.toLowerCase().trim();
-
-    if (translations[lowerText] && translations[lowerText][targetLanguage]) {
-        return translations[lowerText][targetLanguage];
+    try {
+        return await translationService.translateText(text, sourceLanguage, targetLanguage);
+    } catch (error) {
+        console.error('Translation error:', error);
+        // Return fallback if all services fail
+        return `[${targetLanguage.toUpperCase()}] ${text}`;
     }
-
-    // Fallback translation
-    return `[${targetLanguage.toUpperCase()}] ${text}`;
 }
 
 // API endpoints
 app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        translationServices: translationService.getServiceStatus()
+    });
+});
+
+app.get('/api/translation/status', (req, res) => {
+    res.json({
+        services: translationService.getServiceStatus(),
+        supportedLanguages: translationService.getSupportedLanguages(),
+        cacheStats: {
+            keys: translationService.cache.keys().length,
+            ttl: translationService.cache.getTtl()
+        }
+    });
+});
+
+app.post('/api/translation/clear-cache', (req, res) => {
+    try {
+        translationService.clearCache();
+        res.json({ message: 'Translation cache cleared successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to clear cache' });
+    }
+});
+
+app.post('/api/translation/test', async (req, res) => {
+    const { text, sourceLanguage, targetLanguage } = req.body;
+
+    if (!text || !targetLanguage) {
+        return res.status(400).json({ error: 'Text and target language are required' });
+    }
+
+    try {
+        const translation = await translationService.translateText(text, sourceLanguage, targetLanguage);
+        res.json({
+            originalText: text,
+            translatedText: translation,
+            sourceLanguage: sourceLanguage || 'auto',
+            targetLanguage: targetLanguage
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/translation/services', (req, res) => {
+    res.json({
+        services: translationService.getDetailedServiceStatus(),
+        requestStats: translationService.getRequestStats(),
+        lastHealthCheck: new Date(translationService.lastHealthCheck).toISOString()
+    });
+});
+
+app.post('/api/translation/test-service/:service', async (req, res) => {
+    const { service } = req.params;
+
+    if (!['azure', 'deepl', 'microsoft'].includes(service)) {
+        return res.status(400).json({ error: 'Invalid service. Use: azure, deepl, or microsoft' });
+    }
+
+    try {
+        const result = await translationService.testService(service);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/translation/languages', (req, res) => {
+    res.json(translationService.getSupportedLanguages());
+});
+
+app.get('/api/sessions', (req, res) => {
     res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),

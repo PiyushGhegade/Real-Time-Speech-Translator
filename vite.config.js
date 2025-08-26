@@ -22,7 +22,8 @@ export default defineConfig({
                 secure: false,
                 ws: true
             }
-        }
+        },
+        hmr: false
     },
 
     build: {
@@ -36,7 +37,6 @@ export default defineConfig({
             },
             output: {
                 manualChunks: {
-                    vendor: ['socket.io-client'],
                     speech: ['app.js']
                 },
                 chunkFileNames: 'assets/[name]-[hash].js',
@@ -53,7 +53,7 @@ export default defineConfig({
     },
 
     optimizeDeps: {
-        include: ['socket.io-client']
+        include: []
     },
 
     plugins: [],

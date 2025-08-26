@@ -22,6 +22,8 @@ class SpeechTranslator {
         this.stopBtn = document.getElementById('stopBtn');
         this.clearBtn = document.getElementById('clearBtn');
         this.exportBtn = document.getElementById('exportBtn');
+        this.demoBtn = document.getElementById('demoBtn');
+        this.testWsBtn = document.getElementById('testWsBtn');
 
         // Language selectors
         this.sourceLanguage = document.getElementById('sourceLanguage');
@@ -98,6 +100,8 @@ class SpeechTranslator {
         this.stopBtn.addEventListener('click', () => this.stopListening());
         this.clearBtn.addEventListener('click', () => this.clearTranscript());
         this.exportBtn.addEventListener('click', () => this.exportTranscript());
+        this.demoBtn.addEventListener('click', () => this.runDemo());
+        this.testWsBtn.addEventListener('click', () => this.testWebSocket());
         this.closeOverlay.addEventListener('click', () => this.hideOverlay());
 
         this.sourceLanguage.addEventListener('change', () => {
@@ -219,81 +223,43 @@ class SpeechTranslator {
     }
 
     async translateText(text) {
-        // For demo purposes, using a simple translation mapping
-        // In production, you would integrate with a real translation API
-        const translations = {
-            'hello': {
-                'es': 'hola',
-                'fr': 'bonjour',
-                'de': 'hallo',
-                'it': 'ciao',
-                'pt': 'olá',
-                'ru': 'привет',
-                'ja': 'こんにちは',
-                'ko': '안녕하세요',
-                'zh': '你好'
-            },
-            'how are you': {
-                'es': '¿cómo estás?',
-                'fr': 'comment allez-vous?',
-                'de': 'wie geht es dir?',
-                'it': 'come stai?',
-                'pt': 'como você está?',
-                'ru': 'как дела?',
-                'ja': 'お元気ですか？',
-                'ko': '어떻게 지내세요?',
-                'zh': '你好吗？'
-            },
-            'thank you': {
-                'es': 'gracias',
-                'fr': 'merci',
-                'de': 'danke',
-                'it': 'grazie',
-                'pt': 'obrigado',
-                'ru': 'спасибо',
-                'ja': 'ありがとう',
-                'ko': '감사합니다',
-                'zh': '谢谢'
+        // Use the server's translation service instead of hardcoded translations
+        try {
+            const targetLang = this.targetLanguage.value;
+            const sourceLang = this.sourceLanguage.value;
+
+            // Send translation request to server via WebSocket
+            if (this.socket && this.socket.connected) {
+                return new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Translation timeout'));
+                    }, 10000); // 10 second timeout
+
+                    this.socket.emit('translate-request', {
+                        text: text,
+                        sourceLanguage: sourceLang,
+                        targetLanguage: targetLang,
+                        sessionId: this.sessionId
+                    });
+
+                    // Listen for translation response
+                    const handleTranslation = (data) => {
+                        clearTimeout(timeout);
+                        this.socket.off('translation-sent', handleTranslation);
+                        resolve(data.translatedText);
+                    };
+
+                    this.socket.on('translation-sent', handleTranslation);
+                });
+            } else {
+                // Fallback if WebSocket is not available
+                throw new Error('WebSocket connection not available');
             }
-        };
-
-        const targetLang = this.targetLanguage.value;
-        const lowerText = text.toLowerCase().trim();
-
-        // Check for exact matches first
-        if (translations[lowerText] && translations[lowerText][targetLang]) {
-            return translations[lowerText][targetLang];
+        } catch (error) {
+            console.error('Translation error:', error);
+            // Return fallback message
+            return `[${this.targetLanguage.value.toUpperCase()}] ${text}`;
         }
-
-        // Check for partial matches
-        for (const [key, value] of Object.entries(translations)) {
-            if (lowerText.includes(key) && value[targetLang]) {
-                return value[targetLang];
-            }
-        }
-
-        // Fallback: simple character substitution for demo
-        return this.simpleTranslation(text, targetLang);
-    }
-
-    simpleTranslation(text, targetLang) {
-        // Simple character substitution for demonstration
-        const substitutions = {
-            'es': { 'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú' },
-            'fr': { 'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù' },
-            'de': { 'a': 'ä', 'o': 'ö', 'u': 'ü' },
-            'it': { 'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù' }
-        };
-
-        if (substitutions[targetLang]) {
-            let translated = text;
-            Object.entries(substitutions[targetLang]).forEach(([from, to]) => {
-                translated = translated.replace(new RegExp(from, 'gi'), to);
-            });
-            return translated;
-        }
-
-        return `[${targetLang.toUpperCase()}] ${text}`;
     }
 
     restorePunctuation(text) {
@@ -459,6 +425,66 @@ class SpeechTranslator {
         setTimeout(() => this.updateStatus('Ready', 'ready'), 2000);
     }
 
+    // Test WebSocket connection
+    testWebSocket() {
+        this.updateStatus('Testing WebSocket connection...', 'listening');
+
+        if (this.socket && this.socket.connected) {
+            // Send a test ping
+            this.socket.emit('ping', { timestamp: Date.now() });
+            this.updateStatus('WebSocket connected, sent ping', 'ready');
+
+            // Test translation request
+            this.socket.emit('translate-request', {
+                text: 'hello',
+                sourceLanguage: 'en',
+                targetLanguage: 'es',
+                sessionId: 'test-session'
+            });
+
+            setTimeout(() => {
+                this.updateStatus('WebSocket test completed', 'ready');
+            }, 2000);
+        } else if (typeof io === 'undefined') {
+            this.updateStatus('Socket.IO not loaded, check CDN connection', 'error');
+            console.error('Socket.IO library not available. Please check your internet connection.');
+        } else {
+            this.updateStatus('WebSocket not connected, attempting connection...', 'error');
+            this.initializeWebSocket();
+        }
+    }
+
+    // Demo mode for testing translations without microphone
+    runDemo() {
+        const demoTexts = [
+            'hello',
+            'how are you',
+            'i am fine thank you',
+            'good morning',
+            'goodbye',
+            'mother and father have one son and one daughter',
+            'please help me',
+            'excuse me sorry',
+            'yes no water food',
+            'one two three'
+        ];
+
+        let currentIndex = 0;
+        this.updateStatus('Demo mode running...', 'listening');
+
+        const demoInterval = setInterval(() => {
+            if (currentIndex >= demoTexts.length) {
+                clearInterval(demoInterval);
+                this.updateStatus('Demo completed', 'ready');
+                return;
+            }
+
+            const text = demoTexts[currentIndex];
+            this.processFinalTranscript(text);
+            currentIndex++;
+        }, 2000); // Show each text for 2 seconds
+    }
+
     // WebRTC and WebSocket fallback methods
     initializeWebRTC() {
         // WebRTC implementation for ultra-low latency
@@ -474,12 +500,61 @@ class SpeechTranslator {
 
     initializeWebSocket() {
         // WebSocket fallback implementation
+        console.log("Initializing WebSocket...");
+        console.log("Socket.IO available:", typeof io !== "undefined");
+
         try {
-            // WebSocket connection setup would go here
-            this.connectionType = 'WebSocket';
-            this.updateConnectionInfo();
+            // Check if Socket.IO is available globally
+            if (typeof io !== 'undefined') {
+                this.socket = io('http://localhost:3001', {
+                    transports: ['websocket', 'polling'],
+                    timeout: 20000,
+                    forceNew: true
+                });
+
+                this.socket.on('connect', () => {
+                    console.log('WebSocket connected successfully');
+                    this.connectionType = 'WebSocket';
+                    this.updateConnectionInfo();
+                    this.updateStatus('WebSocket connected', 'ready');
+                });
+
+                this.socket.on('disconnect', () => {
+                    console.log('WebSocket disconnected');
+                    this.connectionType = 'WebSocket (Disconnected)';
+                    this.updateConnectionInfo();
+                    this.updateStatus('WebSocket disconnected', 'error');
+                });
+
+                this.socket.on('error', (error) => {
+                    console.error('WebSocket error:', error);
+                    this.updateStatus('WebSocket error', 'error');
+                });
+
+                // Handle server events
+                this.socket.on('translation-ready', (data) => {
+                    console.log('Translation received:', data);
+                });
+
+                this.socket.on('speech-processed', (data) => {
+                    console.log('Speech processed:', data);
+                });
+
+                // Handle pong response
+                this.socket.on('pong', (data) => {
+                    console.log('Pong received:', data);
+                    this.latency = Date.now() - data.timestamp;
+                    this.updateLatency();
+                });
+
+            } else {
+                console.warn('Socket.IO client not available globally');
+                this.connectionType = 'Local';
+                this.updateConnectionInfo();
+                this.updateStatus('Socket.IO not available, using local processing', 'error');
+            }
         } catch (error) {
-            console.warn('WebSocket not available, using local processing');
+            console.warn('WebSocket not available, using local processing:', error);
             this.connectionType = 'Local';
             this.updateConnectionInfo();
         }

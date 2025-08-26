@@ -44,6 +44,15 @@ A powerful, real-time speech translation application designed for online meeting
 - **Socket.IO** - Real-time WebSocket communication
 - **CORS** - Cross-origin resource sharing
 
+### Translation Services
+
+- **Google Cloud Translation API** - Primary translation service (200+ languages)
+- **Azure Cognitive Services Translator** - High-quality fallback service
+- **DeepL API** - Premium quality for European languages
+- **Microsoft Translator** - Reliable backup service
+- **Intelligent Fallback System** - Automatic service switching on failures
+- **Translation Caching** - Reduce API calls and improve performance
+
 ### Communication
 
 - **WebRTC** - Ultra-low latency audio streaming (primary)

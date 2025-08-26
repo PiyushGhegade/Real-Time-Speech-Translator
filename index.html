@@ -66,6 +66,10 @@
         <button id="exportBtn" class="btn btn-outline">
           📥 Export Transcript
         </button>
+        <button id="demoBtn" class="btn btn-outline">🎭 Demo Mode</button>
+        <button id="testWsBtn" class="btn btn-outline">
+          🔌 Test WebSocket
+        </button>
       </div>
 
       <!-- Status Indicator -->
@@ -148,6 +152,25 @@
       <button id="closeOverlay" class="overlay-close">×</button>
     </div>
 
-    <script type="module" src="app.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+      // Fallback to alternative CDN if primary fails
+      if (typeof io === "undefined") {
+        const script = document.createElement("script");
+        script.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js";
+        script.onload = () => console.log("Socket.IO loaded from fallback CDN");
+        script.onerror = () =>
+          console.error("Socket.IO failed to load from both CDNs");
+        document.head.appendChild(script);
+      }
+
+      // Debug: Check if Socket.IO is loaded
+      console.log("Socket.IO loaded:", typeof io !== "undefined");
+      if (typeof io !== "undefined") {
+        console.log("Socket.IO version:", io.version);
+      }
+    </script>
+    <script type="module" src="app.js?v=1.0.1"></script>
   </body>
 </html>
