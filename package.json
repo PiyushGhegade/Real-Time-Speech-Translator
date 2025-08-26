@@ -7,7 +7,9 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "start": "node server.js"
+        "start": "node server.js",
+        "overlay": "electron ./electron/main.js",
+        "app": "concurrently \"npm:start\" \"npm:overlay\""
     },
     "dependencies": {
         "@google-cloud/translate": "^9.2.0",
@@ -20,6 +22,9 @@
     },
     "devDependencies": {
         "autoprefixer": "^10.4.21",
+        "concurrently": "^9.2.1",
+        "electron": "^37.3.1",
+        "electron-builder": "^26.0.12",
         "postcss": "^8.5.6",
         "vite": "^4.4.9"
     },

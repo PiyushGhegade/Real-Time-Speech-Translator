@@ -1,0 +1,32 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0);
+  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+#container {
+  background: rgba(0, 0, 0, 0);
+  padding: 8px 14px;
+}
+
+.line {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.6);
+  font-weight: 700;
+  margin: 6px 0;
+}
+
+#original {
+  font-size: 20px;
+  opacity: 0.85;
+}
+#translated {
+  font-size: 26px;
+}
+
+
+

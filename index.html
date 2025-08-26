@@ -12,6 +12,10 @@
   </head>
   <body>
     <div class="container">
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="trilogy-logo.svg" alt="Trilogy Innovations" class="trilogy-logo">
+      </div>
       <!-- Header -->
       <header class="header">
         <h1>🎤 Real-Time Speech Translator</h1>
@@ -69,6 +73,9 @@
         <button id="demoBtn" class="btn btn-outline">🎭 Demo Mode</button>
         <button id="testWsBtn" class="btn btn-outline">
           🔌 Test WebSocket
+        </button>
+        <button id="pipBtn" class="btn btn-outline">
+          📺 Picture-in-Picture
         </button>
       </div>
 
@@ -142,23 +149,28 @@
         </div>
       </div>
     </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Made by Piyush Ghegade - IIT Patna</p>
+    </footer>
 
     <!-- Caption Overlay (for screen sharing) -->
-    <div id="captionOverlay" class="caption-overlay hidden">
+    <div id="captionOverlay" class="caption-overlay">
       <div class="overlay-content">
-        <div id="overlayOriginal" class="overlay-text original"></div>
-        <div id="overlayTranslated" class="overlay-text translated"></div>
+        <div id="overlayOriginal" class="overlay-text original">Waiting for speech...</div>
+        <div id="overlayTranslated" class="overlay-text translated">Waiting for translation...</div>
       </div>
       <button id="closeOverlay" class="overlay-close">×</button>
     </div>
 
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
       // Fallback to alternative CDN if primary fails
       if (typeof io === "undefined") {
         const script = document.createElement("script");
         script.src =
-          "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js";
+          "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js";
         script.onload = () => console.log("Socket.IO loaded from fallback CDN");
         script.onerror = () =>
           console.error("Socket.IO failed to load from both CDNs");

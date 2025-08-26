@@ -8,16 +8,72 @@
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #1F2937;
   min-height: 100vh;
   color: #333;
   line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Add circular gradients in background */
+body::before,
+body::after,
+.gradient-circle {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+body::before {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(0, 116, 217, 0.3) 0%, rgba(0, 31, 63, 0) 70%);
+  top: 10%;
+  right: -100px;
+}
+
+body::after {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 116, 217, 0.2) 0%, rgba(0, 31, 63, 0) 70%);
+  bottom: 5%;
+  left: -200px;
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 116, 217, 0.15) 0%, rgba(0, 31, 63, 0) 70%);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo Styles */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.trilogy-logo {
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* Header Styles */
@@ -100,22 +156,23 @@ body {
 .btn {
   padding: 15px 30px;
   border: none;
-  border-radius: 30px;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 140px;
   justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #4caf50, #45a049);
+  background: linear-gradient(135deg, #0074D9, #001f3f);
   color: white;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 116, 217, 0.4);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -137,14 +194,15 @@ body {
 .btn-outline {
   background: transparent;
   color: white;
-  border: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
 }
 
 .btn-outline:hover {
-  background: white;
-  color: #333;
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.9);
+  color: #001f3f;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
 .btn:disabled {
@@ -233,7 +291,14 @@ body {
   background: #f8f9fa;
   border-radius: 15px;
   padding: 20px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #0074D9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.current-caption:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 .caption-text {
@@ -248,7 +313,7 @@ body {
 
 .label {
   font-weight: 600;
-  color: #667eea;
+  color: #0074D9;
   min-width: 80px;
   margin-right: 15px;
 }
@@ -288,10 +353,11 @@ body {
 
 .transcript-item {
   background: #f8f9fa;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 15px;
-  border-left: 3px solid #4caf50;
+  border-left: 3px solid #0074D9;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .transcript-item:hover {
@@ -320,7 +386,7 @@ body {
 }
 
 .transcript-translation {
-  color: #667eea;
+  color: #0074D9;
   font-style: italic;
 }
 
@@ -359,7 +425,7 @@ body {
 .setting-item input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  accent-color: #667eea;
+  accent-color: #0074D9;
 }
 
 .setting-item input[type="number"] {
@@ -370,12 +436,30 @@ body {
   text-align: center;
 }
 
+/* Footer Styles */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: white;
+  font-size: 0.9rem;
+  margin-top: 30px;
+  background: rgba(31, 41, 55, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 10px 10px 0 0;
+}
+
+.footer p {
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
 /* Caption Overlay */
 .caption-overlay {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(31, 41, 55, 0.9);
   color: white;
   padding: 20px;
   border-radius: 15px;
@@ -383,10 +467,29 @@ body {
   z-index: 1000;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateX(0);
+  opacity: 1;
 }
 
 .caption-overlay.hidden {
   display: none;
+}
+
+.caption-overlay.slide-in {
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .overlay-content {
@@ -429,6 +532,18 @@ body {
 
 .overlay-close:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* Picture-in-Picture button styling */
+#pipBtn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+#pipBtn:hover {
+  background-color: #4a5568;
+  color: white;
 }
 
 /* Responsive Design */

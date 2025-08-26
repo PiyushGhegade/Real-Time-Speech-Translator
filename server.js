@@ -314,7 +314,7 @@ app.get('/api/sessions', (req, res) => {
     const sessionList = Array.from(sessions.values()).map(session => ({
         id: session.id,
         participants: session.participants.size,
-        startTime: session.startTime,
+        startTime: session.starvtTime,
         transcriptLength: session.transcript.length
     }));
 
