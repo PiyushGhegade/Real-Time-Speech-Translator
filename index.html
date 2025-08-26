@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-Time Speech Translator</title>
+    <link rel="stylesheet" href="./styles.css?v=1.0.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <h1>🎤 Real-Time Speech Translator</h1>
+        <p>Instant translation with live captions for online meetings</p>
+      </header>
+
+      <!-- Language Selection -->
+      <div class="language-section">
+        <div class="language-selector">
+          <label for="sourceLanguage">From:</label>
+          <select id="sourceLanguage">
+            <option value="en-US">English (US)</option>
+            <option value="es-ES">Spanish</option>
+            <option value="fr-FR">French</option>
+            <option value="de-DE">German</option>
+            <option value="it-IT">Italian</option>
+            <option value="pt-BR">Portuguese</option>
+            <option value="ru-RU">Russian</option>
+            <option value="ja-JP">Japanese</option>
+            <option value="ko-KR">Korean</option>
+            <option value="zh-CN">Chinese</option>
+          </select>
+        </div>
+        <div class="language-selector">
+          <label for="targetLanguage">To:</label>
+          <select id="targetLanguage">
+            <option value="es">Spanish</option>
+            <option value="en">English</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="it">Italian</option>
+            <option value="pt">Portuguese</option>
+            <option value="ru">Russian</option>
+            <option value="ja">Japanese</option>
+            <option value="ko">Korean</option>
+            <option value="zh">Chinese</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Control Panel -->
+      <div class="control-panel">
+        <button id="startBtn" class="btn btn-primary">
+          🎤 Start Listening
+        </button>
+        <button id="stopBtn" class="btn btn-secondary" disabled>
+          ⏹️ Stop Listening
+        </button>
+        <button id="clearBtn" class="btn btn-outline">
+          🗑️ Clear Transcript
+        </button>
+        <button id="exportBtn" class="btn btn-outline">
+          📥 Export Transcript
+        </button>
+      </div>
+
+      <!-- Status Indicator -->
+      <div class="status-section">
+        <div id="statusIndicator" class="status-indicator">
+          <span class="status-dot"></span>
+          <span id="statusText">Ready to start</span>
+        </div>
+        <div class="connection-info">
+          <span id="connectionType">WebSocket</span>
+          <span id="latency">Latency: -- ms</span>
+        </div>
+      </div>
+
+      <!-- Live Captions -->
+      <div class="captions-section">
+        <h3>Live Captions</h3>
+        <div class="captions-container">
+          <div id="currentCaption" class="current-caption">
+            <div class="caption-text">
+              <span class="label">Original:</span>
+              <span id="originalText" class="text"
+                >Start speaking to see live captions...</span
+              >
+            </div>
+            <div class="caption-text">
+              <span class="label">Translation:</span>
+              <span id="translatedText" class="text"
+                >Start speaking to see live captions...</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transcript History -->
+      <div class="transcript-section">
+        <h3>Transcript History</h3>
+        <div class="transcript-container">
+          <div id="transcriptList" class="transcript-list">
+            <!-- Transcript items will be added here dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="settings-panel">
+        <h3>Settings</h3>
+        <div class="setting-item">
+          <label for="punctuationToggle">Restore Punctuation:</label>
+          <input type="checkbox" id="punctuationToggle" checked />
+        </div>
+        <div class="setting-item">
+          <label for="silenceDetection">Detect Silences:</label>
+          <input type="checkbox" id="silenceDetection" checked />
+        </div>
+        <div class="setting-item">
+          <label for="speakerDiarization">Speaker Detection:</label>
+          <input type="checkbox" id="speakerDiarization" checked />
+        </div>
+        <div class="setting-item">
+          <label for="captionDelay">Caption Delay (ms):</label>
+          <input
+            type="number"
+            id="captionDelay"
+            value="100"
+            min="0"
+            max="1000"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Caption Overlay (for screen sharing) -->
+    <div id="captionOverlay" class="caption-overlay hidden">
+      <div class="overlay-content">
+        <div id="overlayOriginal" class="overlay-text original"></div>
+        <div id="overlayTranslated" class="overlay-text translated"></div>
+      </div>
+      <button id="closeOverlay" class="overlay-close">×</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
