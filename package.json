@@ -1,41 +1,41 @@
 {
-    "name": "real-time-speech-translator",
-    "version": "1.0.0",
-    "description": "Real-time speech translator for online meetings with low-latency captions",
-    "main": "index.js",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "preview": "vite preview",
-        "start": "node server.js",
-        "overlay": "electron ./electron/main.js",
-        "app": "concurrently \"npm:start\" \"npm:overlay\""
-    },
-    "dependencies": {
-        "@google-cloud/translate": "^9.2.0",
-        "axios": "^1.11.0",
-        "cors": "^2.8.5",
-        "dotenv": "^16.3.1",
-        "express": "^4.18.2",
-        "node-cache": "^5.1.2",
-        "socket.io": "^4.7.2"
-    },
-    "devDependencies": {
-        "autoprefixer": "^10.4.21",
-        "concurrently": "^9.2.1",
-        "electron": "^37.3.1",
-        "electron-builder": "^26.0.12",
-        "postcss": "^8.5.6",
-        "vite": "^4.5.14"
-    },
-    "keywords": [
-        "speech",
-        "translation",
-        "real-time",
-        "captions",
-        "webrtc",
-        "websocket"
-    ],
-    "author": "Your Name",
-    "license": "MIT"
+  "name": "real-time-speech-translator",
+  "version": "1.0.0",
+  "description": "Real-time speech translator for online meetings with low-latency captions",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.js",
+    "overlay": "electron ./electron/main.js",
+    "app": "concurrently \"npm:start\" \"npm:overlay\""
+  },
+  "dependencies": {
+    "@google-cloud/translate": "^9.2.0",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-cache": "^5.1.2",
+    "socket.io": "^4.7.2",
+    "vite": "^4.5.14"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
+    "electron": "^37.3.1",
+    "electron-builder": "^26.0.12",
+    "postcss": "^8.5.6"
+  },
+  "keywords": [
+    "speech",
+    "translation",
+    "real-time",
+    "captions",
+    "webrtc",
+    "websocket"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
 }
